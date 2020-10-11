@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+	"net/http"
 )
 
 type product struct {
@@ -52,4 +54,21 @@ func getProducts(db *sql.DB, start, count int) ([]product, error) {
 		products = append(products, p)
 	}
 	return products, nil
+}
+
+func (a *App) createProduct(w http.ResponseWriter, r *http.Request) {
+	var p product
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&p); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	if err := p.createProduct(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, p)
 }
