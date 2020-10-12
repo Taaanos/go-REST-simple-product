@@ -1,0 +1,18 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# MacOS specific
+.DS_Store
+
+# Dependency directories
+vendor/
+
+# anything under a tmp folder
+**/tmp/*
