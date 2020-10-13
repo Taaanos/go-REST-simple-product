@@ -1,9 +1,13 @@
 package main
 
-import "os"
+import "flag"
 
 func main() {
+	boolPtr := flag.Bool("prod", false, "Provide this flag in production. This ensures that a .config file is provided before the application starts.")
+	flag.Parse()
+	cfg := LoadConfig(*boolPtr)
+	dbCfg := cfg.Database
 	a := App{}
-	a.Initialize(os.Getenv("APP_DB_USERNAME"), os.Getenv("APP_DB_PASSWORD"), os.Getenv("APP_DB_NAME"))
-	a.Run(":8010")
+	a.Initialize(dbCfg.ConnectionInfo())
+	a.Run(cfg.Port)
 }

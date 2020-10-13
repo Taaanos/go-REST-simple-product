@@ -16,3 +16,6 @@ vendor/
 
 # anything under a tmp folder
 **/tmp/*
+
+# exec
+go-api

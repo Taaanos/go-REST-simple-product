@@ -3,24 +3,41 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/go-REST-simple-product/models"
 	"github.com/gorilla/mux"
 
 	_ "github.com/lib/pq"
 )
 
+// App exposes references to the Router and Database the application uses
 type App struct {
 	Router *mux.Router
 	DB     *sql.DB
 }
 
-func (a *App) Initialize(user, password, dbname string) {}
+// Initialize sets up the connection to the database
+func (a *App) Initialize(connectionString string) {
+	var err error
+	a.DB, err = sql.Open("postgres", connectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	a.Router = mux.NewRouter()
+	a.initializeRoutes()
+}
 
-func (a *App) Run(addr string) {}
+// Run starts the server
+func (a *App) Run(addr int) {
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", addr), a.Router))
+}
 
-func (a *App) getProduct(w http.ResponseWriter, r *http.Request) {
+//ByID GET /product/:id
+func (a *App) ByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -28,8 +45,8 @@ func (a *App) getProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p := product{ID: id}
-	if err := p.getProduct(a.DB); err != nil {
+	p := models.Product{ID: id}
+	if err := p.ByID(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Product not found")
@@ -43,7 +60,9 @@ func (a *App) getProduct(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
+//Index GET /products
+// /products?start=10 etc
+func (a *App) Index(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.FormValue("count"))
 	start, _ := strconv.Atoi(r.FormValue("start"))
 
@@ -54,7 +73,7 @@ func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 		start = 0
 	}
 
-	products, err := getProducts(a.DB, start, count)
+	products, err := models.ByRange(a.DB, start, count)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -68,8 +87,76 @@ func respondWithError(w http.ResponseWriter, code int, message string) {
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
+}
+
+// Create POST/product creates a new product
+func (a *App) Create(w http.ResponseWriter, r *http.Request) {
+	var p models.Product
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&p); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	if err := p.Create(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, p)
+}
+
+// Update PUT/product/:id
+func (a *App) Update(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
+		return
+	}
+
+	p := models.Product{ID: id}
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&p); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	if err := p.Update(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, p)
+}
+
+//Delete DELETE/product/:id
+func (a *App) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
+		return
+	}
+
+	p := models.Product{ID: id}
+	if err := p.Delete(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+}
+
+func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/products", a.Index).Methods("GET")
+	a.Router.HandleFunc("/product", a.Create).Methods("POST")
+	a.Router.HandleFunc("/product/{id:[0-9]+}", a.ByID).Methods("GET")
+	a.Router.HandleFunc("/product/{id:[0-9]+}", a.Update).Methods("PUT")
+	a.Router.HandleFunc("/product/{id:[0-9]+}", a.Delete).Methods("DELETE")
 }
