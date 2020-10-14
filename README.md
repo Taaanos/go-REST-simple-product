@@ -19,7 +19,9 @@ A simple REST API to manage products in a database.
 
 The app currently assumes a working installation of postgres. Create a database in your postgres instance and provide your credentials and info in the .config file.
 
-## API
+## API Spec
+
+[Postman Collection](https://documenter.getpostman.com/view/13097698/TVRoYmdb)
 
 * GET /products returns a list of products
 * GET /products?start= returns a list of products from the start point in the db
