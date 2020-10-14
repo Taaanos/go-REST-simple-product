@@ -21,9 +21,9 @@ type App struct {
 }
 
 // Initialize sets up the connection to the database
-func (a *App) Initialize(connectionString string) {
+func (a *App) Initialize(dialect, connectionInfo string) {
 	var err error
-	a.DB, err = sql.Open("postgres", connectionString)
+	a.DB, err = sql.Open(dialect, connectionInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,7 +92,7 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
-// Create POST/product creates a new product
+// Create POST /product creates a new product
 func (a *App) Create(w http.ResponseWriter, r *http.Request) {
 	var p models.Product
 	decoder := json.NewDecoder(r.Body)
@@ -110,7 +110,7 @@ func (a *App) Create(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, p)
 }
 
-// Update PUT/product/:id
+// Update PUT /product/:id updates the given product
 func (a *App) Update(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -135,7 +135,7 @@ func (a *App) Update(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, p)
 }
 
-//Delete DELETE/product/:id
+//Delete DELETE /product/:id deletes the given product
 func (a *App) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

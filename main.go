@@ -8,6 +8,6 @@ func main() {
 	cfg := LoadConfig(*boolPtr)
 	dbCfg := cfg.Database
 	a := App{}
-	a.Initialize(dbCfg.ConnectionInfo())
+	a.Initialize(dbCfg.Dialect(), dbCfg.ConnectionInfo())
 	a.Run(cfg.Port)
 }

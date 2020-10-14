@@ -14,6 +14,10 @@ type PostgresConfig struct {
 	Name     string `json: "name"`
 }
 
+func (c PostgresConfig) Dialect() string {
+	return "postgres"
+}
+
 func (c PostgresConfig) ConnectionInfo() string {
 	if c.Password == "" {
 		return fmt.Sprintf("host=%s port=%d user=%s  dbname=%s sslmode=disable",
