@@ -155,8 +155,8 @@ func (a *App) Delete(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/products", a.Index).Methods("GET")
-	a.Router.HandleFunc("/product", a.Create).Methods("POST")
-	a.Router.HandleFunc("/product/{id:[0-9]+}", a.ByID).Methods("GET")
-	a.Router.HandleFunc("/product/{id:[0-9]+}", a.Update).Methods("PUT")
-	a.Router.HandleFunc("/product/{id:[0-9]+}", a.Delete).Methods("DELETE")
+	a.Router.HandleFunc("/products", a.Create).Methods("POST")
+	a.Router.HandleFunc("/products/{id:[0-9]+}", a.ByID).Methods("GET")
+	a.Router.HandleFunc("/products/{id:[0-9]+}", a.Update).Methods("PUT")
+	a.Router.HandleFunc("/products/{id:[0-9]+}", a.Delete).Methods("DELETE")
 }
