@@ -18,7 +18,7 @@ A simple REST API to manage products in a database.
 
 ## How to run it
 
-```
+```bash
 make postgres createdb migrateup
 ```
 
