@@ -13,5 +13,17 @@ migrateup:
 migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/products?sslmode=disable" -verbose down
 
-.PHONY: postgres createdb dropdb migrateup migratedown
+reset:
+	make dropdb createdb migrateup
+
+build:
+	go build -v -o go-api
+
+run :
+	./go-api
+
+test:
+	go test -v
+
+.PHONY: postgres createdb dropdb migrateup migratedown reset
 
