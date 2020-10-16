@@ -18,7 +18,9 @@ func (p *Product) ByID(db *sql.DB) error {
 
 // Create creates a product in the database
 func (p *Product) Create(db *sql.DB) error {
-	_, err := db.Exec("INSERT INTO products(name,price) VALUES($1,$2) RETURNING id", p.Name, p.Price)
+	err := db.QueryRow(
+		"INSERT INTO products(name, price) VALUES($1, $2) RETURNING id",
+		p.Name, p.Price).Scan(&p.ID)
 	if err != nil {
 		return err
 	}
