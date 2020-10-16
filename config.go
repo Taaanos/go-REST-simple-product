@@ -31,9 +31,9 @@ func DefaultPostgresConfig() PostgresConfig {
 	return PostgresConfig{
 		Host:     "localhost",
 		Port:     5432,
-		User:     "tanos",
-		Password: "password",
-		Name:     "products_demo",
+		User:     "root",
+		Password: "secret",
+		Name:     "products",
 	}
 }
 
@@ -73,3 +73,11 @@ func LoadConfig(configReq bool) Config {
 	fmt.Println("Successfully loaded .config")
 	return c
 }
+
+// func LoadEnvVars() Config {
+// 	var c Config
+// 	c.Database.Name = os.Getenv("APP_DB_NAME")
+// 	c.Database.User = os.Getenv("APP_DB_USERNAME")
+// 	c.Database.Password = os.Getenv("APP_DB_PASSWORD")
+// 	return c
+// }
