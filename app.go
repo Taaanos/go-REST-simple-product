@@ -153,7 +153,12 @@ func (a *App) Delete(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
+func (a *App) Home(w http.ResponseWriter, r *http.Request) {
+	respondWithJSON(w, http.StatusOK, "Greetings")
+}
+
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/", a.Home).Methods("GET")
 	a.Router.HandleFunc("/products", a.Index).Methods("GET")
 	a.Router.HandleFunc("/products", a.Create).Methods("POST")
 	a.Router.HandleFunc("/products/{id:[0-9]+}", a.ByID).Methods("GET")
