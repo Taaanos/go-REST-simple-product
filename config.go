@@ -49,7 +49,7 @@ func (c Config) IsProd() bool {
 
 func DefaultConfig() Config {
 	return Config{
-		Port:     3000,
+		Port:     3010,
 		Env:      "dev",
 		Database: DefaultPostgresConfig(),
 	}
@@ -71,13 +71,6 @@ func LoadConfig(configReq bool) Config {
 		panic(err)
 	}
 	fmt.Println("Successfully loaded .config")
+	fmt.Println(c.Database.Host)
 	return c
 }
-
-// func LoadEnvVars() Config {
-// 	var c Config
-// 	c.Database.Name = os.Getenv("APP_DB_NAME")
-// 	c.Database.User = os.Getenv("APP_DB_USERNAME")
-// 	c.Database.Password = os.Getenv("APP_DB_PASSWORD")
-// 	return c
-// }
