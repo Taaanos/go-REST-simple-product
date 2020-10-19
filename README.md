@@ -23,16 +23,23 @@ A simple REST API to manage products in a database.
 
 ## How to run
 
+You need to have `golang-migrate` installed or use a tool of your choice.
+
 ```bash
-docker-compose up --build
-make createdb migrateup
+brew install golang-migrate
 ```
 
-You need to have `migrate` installed or use a tool of your choice.
+```bash
+# cd to the project dir
+docker-compose up --build
 
-Tests are currently not containirized.
+# in a new window, in the same dir run
+make migrateup
+```
 
 ### How to run tests
+
+You need to have `go` and `migrate` installed.
 
 ```bash
 make postgres createdb migrateup
@@ -41,5 +48,5 @@ make build test
 
 ### Config and env files
 
-`.config` is read by the go app, change vars according to your needs
-`.env` is read by docker, changes here should be synced with `.config`. (not automated yet)
+`.config` is read by the go app, change vars according to your needs.
+`.env` is read by docker, changes here should be synced with `.config`.
