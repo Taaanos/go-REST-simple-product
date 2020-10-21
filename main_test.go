@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"flag"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -15,9 +14,7 @@ import (
 var a App
 
 func TestMain(m *testing.M) {
-	boolPtr := flag.Bool("prod", false, "Provide this flag in production. This ensures that a .config file is provided before the application starts.")
-	flag.Parse()
-	cfg := LoadConfig(*boolPtr)
+	cfg := DefaultConfig()
 	dbCfg := cfg.Database
 	a.Initialize(dbCfg.Dialect(), dbCfg.ConnectionInfo())
 
