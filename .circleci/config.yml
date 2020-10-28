@@ -14,8 +14,6 @@ jobs:
     - run:
         name: Building...
         command: go build -v -o go-app-circleci
-    environment:
-    - CIRCLE_COMPARE_URL: https://github.com/Taaanos/go-REST-simple-product/compare/6c3fbe2a21e9bfef2bc7337bb7dd1b734ed7a215...e412c7a238ad23b94af6709d742a01676830e87a
 workflows:
   version: 2
   build_and_push_image:
