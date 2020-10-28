@@ -59,3 +59,13 @@ make test
 `.env` is read by docker, changes here should be synced with `.config`.
 
 Tests use the default config found in `config.go`.
+
+## CI/CD
+
+### Integration
+
+Workflow at circleci makes sure that the app builds successfully.
+
+### Delivery
+
+Workflow uses the `circleci/aws-ecr` orb to build and push the docker image to AWS/ECR.
