@@ -1,37 +1,33 @@
-# Golang CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-go/ for more details
-version: 2
+version: 2.1
+orbs:
+    aws-ecr: circleci/aws-ecr@6.14.0
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.14
-      # - image: circleci/postgres:latest
-      #   environment: # environment variables for primary container
-      #     POSTGRES_USER: root
-      #     POSTGRES_DB: secret
-
-      # - image: migrate/migrate
-
+    - image: circleci/golang:1.14
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
-      # - run:
-      #     name: "Git clone"
-      #     command: "git clone $CIRCLE_REPOSITORY_URL /tmp/_circleci_local_build_repo"
-      - checkout
-      - run: 
-          name: Getting dependencies
-          command: go get -v -t -d ./...
-      # - run:
-      #     name: Waiting for Postgres to be ready
-      #     command: dockerize -wait tcp://localhost:5432 -timeout 2m
-      # - run:
-      #     name: Running integration tests
-      #     command: go test -v ./...
-      - run:
-          name: Building...
-          command: go build -v -o go-app-circleci
-      
-
-      
-      # - run: go test -v ./... 
+    - checkout
+    - run:
+        name: Getting dependencies
+        command: go get -v -t -d ./...
+    - run:
+        name: Building...
+        command: go build -v -o go-app-circleci
+    environment:
+    - CIRCLE_COMPARE_URL: https://github.com/Taaanos/go-REST-simple-product/compare/6c3fbe2a21e9bfef2bc7337bb7dd1b734ed7a215...e412c7a238ad23b94af6709d742a01676830e87a
+workflows:
+  version: 2
+  build_and_push_image:
+    jobs:
+    - build
+    - aws-ecr/build-and-push-image:
+        account-url: AWS_ECR_ACCOUNT_URL
+        aws-access-key-id: AWS_ACCESS_KEY_ID
+        aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+        create-repo: true
+        dockerfile: Dockerfile
+        path: .
+        region: AWS_REGION
+        repo: go-rest-simple-product
+        tag: "$CIRCLE_SHA1"
