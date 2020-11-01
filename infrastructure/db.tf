@@ -28,6 +28,7 @@ resource "aws_db_instance" "product_database" {
   password               = var.db_password
   publicly_accessible    = true
   vpc_security_group_ids = [aws_security_group.db_allow_all.id]
+  skip_final_snapshot    = true
 }
 
 
