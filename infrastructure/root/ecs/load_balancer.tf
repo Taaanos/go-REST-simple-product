@@ -71,32 +71,6 @@ resource "aws_security_group" "http_allow_all" {
   }
 }
 
-resource "aws_security_group" "allow_http_product_service" {
-  name        = "allow_http_product_service"
-  description = "Allow http indound traffic at port 3010"
-
-  ingress {
-    description = "TCP from all"
-    from_port   = 3010
-    to_port     = 3010
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    protocol    = "-1"
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Terraform = true
-    Name      = "allow_http_product_service"
-  }
-
-}
-
 resource "aws_lb_target_group" "product_service" {
   name_prefix = "prdtg"
   port        = 3010
@@ -109,8 +83,4 @@ resource "aws_lb_target_group" "product_service" {
   tags = {
     Terraform = true
   }
-}
-
-output "lb_dns" {
-  value = aws_lb.window_lb.dns_name
 }
