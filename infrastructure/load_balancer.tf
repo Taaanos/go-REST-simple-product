@@ -4,7 +4,7 @@ resource "aws_lb" "window_lb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.http_allow_all.id]
   subnets            = data.aws_subnet_ids.default.ids
-  
+
   enable_deletion_protection = false
 
   tags = {
@@ -72,10 +72,10 @@ resource "aws_security_group" "http_allow_all" {
 }
 
 resource "aws_security_group" "allow_http_product_service" {
-  name = "allow_http_product_service"
+  name        = "allow_http_product_service"
   description = "Allow http indound traffic at port 3010"
 
-   ingress {
+  ingress {
     description = "TCP from all"
     from_port   = 3010
     to_port     = 3010
@@ -83,7 +83,7 @@ resource "aws_security_group" "allow_http_product_service" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    egress {
+  egress {
     from_port   = 0
     protocol    = "-1"
     to_port     = 0
@@ -92,9 +92,9 @@ resource "aws_security_group" "allow_http_product_service" {
 
   tags = {
     Terraform = true
-    Name = "allow_http_product_service"
+    Name      = "allow_http_product_service"
   }
-  
+
 }
 
 resource "aws_lb_target_group" "product_service" {
