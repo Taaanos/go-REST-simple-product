@@ -1,3 +1,7 @@
+data "aws_vpc" "default" {
+  default = true
+}
+
 resource "aws_security_group" "db_allow_all" {
   name        = "db_allow_all"
   description = "Allow all inbound traffic"
@@ -29,13 +33,4 @@ resource "aws_db_instance" "product_database" {
   publicly_accessible    = true
   vpc_security_group_ids = [aws_security_group.db_allow_all.id]
   skip_final_snapshot    = true
-}
-
-
-output "database_address" {
-  value = aws_db_instance.product_database.address
-}
-
-output "database_port" {
-  value = aws_db_instance.product_database.port
 }
