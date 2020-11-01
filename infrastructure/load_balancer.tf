@@ -4,10 +4,8 @@ resource "aws_lb" "window_lb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.http_allow_all.id]
   subnets            = data.aws_subnet_ids.default.ids
-
-  enable_deletion_protection = true
-
-
+  
+  enable_deletion_protection = false
 
   tags = {
     Environment = "production"
