@@ -27,7 +27,7 @@ resource "aws_ecs_service" "product_service" {
   launch_type     = "FARGATE"
   network_configuration {
     subnets          = data.aws_subnet_ids.default.ids
-    security_groups  = [aws_security_group.http_allow_all.id]
+    security_groups  = [aws_security_group.allow_http_product_service.id]
     assign_public_ip = true
   }
 

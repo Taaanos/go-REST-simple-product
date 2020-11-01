@@ -45,7 +45,6 @@ resource "aws_lb_listener_rule" "product_service" {
       values = ["/"]
     }
   }
-
 }
 
 resource "aws_security_group" "http_allow_all" {
@@ -61,14 +60,6 @@ resource "aws_security_group" "http_allow_all" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    description = "TCP from all"
-    from_port   = 3010
-    to_port     = 3010
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     protocol    = "-1"
@@ -80,6 +71,32 @@ resource "aws_security_group" "http_allow_all" {
     Terraform = true
     Name      = "http_allow_all"
   }
+}
+
+resource "aws_security_group" "allow_http_product_service" {
+  name = "allow_http_product_service"
+  description = "Allow http indound traffic at port 3010"
+
+   ingress {
+    description = "TCP from all"
+    from_port   = 3010
+    to_port     = 3010
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Terraform = true
+    Name = "allow_http_product_service"
+  }
+  
 }
 
 resource "aws_lb_target_group" "product_service" {
