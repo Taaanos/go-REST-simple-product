@@ -34,3 +34,15 @@ resource "aws_db_instance" "product_database" {
   vpc_security_group_ids = [aws_security_group.db_allow_all.id]
   skip_final_snapshot    = true
 }
+
+resource "aws_ssm_parameter" "db_secret" {
+  name        = "/stage/database/password/master"
+  description = "Database password"
+  type        = "SecureString"
+  value       = var.db_password
+  overwrite   = true
+
+  tags = {
+    environment = "stage"
+  }
+}
