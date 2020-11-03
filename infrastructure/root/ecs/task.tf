@@ -36,6 +36,26 @@ resource "aws_iam_role_policy" "ecs_task_policy" {
   EOF
 }
 
+resource "aws_iam_role_policy" "ecs_ssm_policy" {
+  name = "ecs-ssm-policy"
+  role = aws_iam_role.ecs_task_role.id
+
+  policy = <<-EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameters"
+            ],
+            "Resource": "arn:aws:ssm:eu-west-2:044273517366:parameter/stage/database/password/master"
+        }
+    ]
+  }
+  EOF
+}
+
 resource "aws_iam_role" "ecs_task_role" {
   name = "ecs-task-role"
 

@@ -1,11 +1,35 @@
 [{
     "name": "product-service-container",
-    "image": "044273517366.dkr.ecr.eu-west-2.amazonaws.com/go-rest-simple-product:70a4eefd82abe4c5d28e8f0cc5a624ba87b028a0",
+    "image": "044273517366.dkr.ecr.eu-west-2.amazonaws.com/go-rest-simple-product:f61f4d5880528d63206051003912a4b54600b8a5",
     "essential": true,
+    "environment": [
+      {
+          "name": "POSTGRES_USER",
+          "value": "postgres"
+      },
+      {
+        "name": "POSTGRES_PORT",
+        "value": "5432"
+    },
+    {
+        "name": "POSTGRES_DB",
+        "value": "products"
+    },
+    {
+        "name": "POSTGRES_HOST",
+        "value": "terraform-20201101162848047200000001.cmihs4azjbft.eu-west-2.rds.amazonaws.com"
+    }
+  ],
     "portMappings": [
       {
         "containerPort": 3010,
         "hostPort": 3010
+      }
+    ],
+    "secrets": [
+      {
+        "name": "POSTGRES_PASSWORD",
+        "valueFrom": "arn:aws:ssm:eu-west-2:044273517366:parameter/stage/database/password/master"
       }
     ]
  }
