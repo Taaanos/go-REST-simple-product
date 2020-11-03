@@ -154,7 +154,7 @@ func (a *App) Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) Home(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(w, http.StatusOK, "Greetings")
+	respondWithJSON(w, http.StatusOK, "What're ya buyin?")
 }
 
 func (a *App) initializeRoutes() {
