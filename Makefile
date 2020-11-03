@@ -22,6 +22,7 @@ test:
 	sleep 3 
 	make createdb migrateup
 	go test -v
+	make stop
 
 stop: 
 	docker-compose down
