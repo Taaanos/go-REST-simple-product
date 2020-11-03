@@ -21,7 +21,7 @@ RUN cp /build/go-api .
 # Multistage build
 FROM scratch
 COPY --from=builder /dist/go-api /
-COPY .config .
+# COPY .config .
 
 EXPOSE 3010
 CMD ["/go-api"]
