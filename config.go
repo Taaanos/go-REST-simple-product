@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -37,14 +36,13 @@ func DefaultPostgresConfig() PostgresConfig {
 	return PostgresConfig{
 		Host:     "localhost",
 		Port:     5432,
-		User:     "postgres",
+		User:     "root",
 		Password: "secret",
 		Name:     "products",
 	}
 }
 
 // EnvPostgresConfig loads the postgres configuration from the env vars
-// TODO: handle env vars that were not provided.
 func EnvPostgresConfig() PostgresConfig {
 	port, _ := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
 	return PostgresConfig{
@@ -81,55 +79,41 @@ func EnvVarsConfig() Config {
 	}
 }
 
-// LoadConfig loads a configuration file
-// TODO: Decide on how to pass secrets
-func LoadConfig(configReq bool) Config {
-	f, err := os.Open(".config")
-	if err != nil {
-		if configReq {
-			panic(err)
-		}
-		// Config from env vars
-		fmt.Println("Using the env vars to config...")
-		return EnvVarsConfig()
-	}
-	var c Config
-	dec := json.NewDecoder(f)
-	err = dec.Decode(&c)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Successfully loaded .config")
-	fmt.Println(c.Database.Host)
-	return c
-}
-
-// LoadEnvVarsConfig creates the config based on the env vars.
-// Since configuration is only based on env vars, if one is not set
+// LoadConfig creates the config based on the env vars if they exist
+// or else gets the default.
+// Configuration in production only based on env vars, if one is not set
 // it will report it.
-func LoadEnvVarsConfig() Config {
+func LoadConfig() Config {
+	notSet := 0
 	_, isSet := os.LookupEnv("POSTGRES_PORT")
 	if !isSet {
-		panic("POSTGRES_PORT not set")
+		fmt.Println("POSTGRES_PORT not set")
+		notSet++
 	}
 	_, isSet = os.LookupEnv("POSTGRES_USER")
 	if !isSet {
-		panic("POSTGRES_USER not set")
+		fmt.Println("POSTGRES_USER not set")
+		notSet++
 	}
 	_, isSet = os.LookupEnv("POSTGRES_PASSWORD")
 	if !isSet {
-		panic("POSTGRES_PASSWORD not set")
+		fmt.Println("POSTGRES_PASSWORD not set")
+		notSet++
 	}
 	_, isSet = os.LookupEnv("POSTGRES_DB")
 	if !isSet {
-		panic("POSTGRES_DB not set")
+		fmt.Println("POSTGRES_DB not set")
+		notSet++
 	}
 	_, isSet = os.LookupEnv("POSTGRES_HOST")
 	if !isSet {
-		panic("POSTGRES_HOST not set")
+		fmt.Println("POSTGRES_HOST not set")
+		notSet++
 	}
-
-	// TODO:map with which are set and which are not
+	if notSet != 0 {
+		fmt.Println("Using default config...")
+		return DefaultConfig()
+	}
 	fmt.Println("Using env vars to config connection... \n POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT")
 	return EnvVarsConfig()
 }
